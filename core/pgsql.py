@@ -17,7 +17,13 @@ class DB:
         数据库额连接
         :return: 数据库连接对象
         """
-        self.conn = psycopg2.connect(DB_CONFIG)
+        self.conn = psycopg2.connect(
+            host=DB_CONFIG["host"],
+            port=DB_CONFIG["port"],
+            database=DB_CONFIG["database"],
+            user=DB_CONFIG["user"],
+            password=DB_CONFIG["password"],
+        )
         if self.conn:
             print("数据库连接成功")
             return True
@@ -97,3 +103,10 @@ class DB:
         except Exception as e:
             print("数据查询失败")
             print(e)
+
+    def __enter__(self):
+        self.db_connection()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.db_close()
